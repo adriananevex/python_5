@@ -116,4 +116,42 @@ class TransactionStream(DataStream):
                 float(item["amount"]) if item["operation"] == "buy" else -float(item["amount"])
                 for item in valid_ops
             )
-            signal = 
+            signal = "+" if net_flow >= 0 else ""
+            return f"Transaction analysis: {len(valid_ops)} operations, net flow: {signal}{net_flow:.0f} units"
+        except Exception:
+            self.total_failed += len(data_batch)
+            return "Transaction analysis failed: invalid batch format"
+    
+    def filter_data(self, data_batch: List[Any], criteria: Optional[str] = None) -> List[Any]:
+        valid_ops = [
+            itemfor item in data_batch
+            if isinstance(item, dict) and isinstance(item.get("amount"), (int, float))
+        ]
+
+        if criteria is None:
+            return valid_ops
+        
+        criteria_lower = criteria.lower()
+        if criteria_lower == "large":
+            return [item for item in valid_ops if float(item["amount"]) >= 100]
+
+        if criteria_lower in {"buy", "sell"}:
+            return [item for item in valid_ops if str(item.get("operation", "")).lower() == criteria_lower]
+
+        return []
+
+
+class EventStream(DataStream):
+    def __init__(self, stream_id: str) -> None:
+        super().__init__(stream_id, "System Events")
+
+    def process_batch(self, data_batch: List[Any]) -> str:
+        self.last_batch_size = len(data_batch)
+        try:
+            valid_events = [item for item in data_batch if isinstance(item, str) and item.strip()]
+            self.total_processed += len(valid_events)
+            self.total_failed += len(data_batch) - len(valid_events)
+            error_count = sum(1 for event in valid_events if "error" in event.lower())
+            return f"Event analysis: {len(valid_events)} events, {error_count} error detected"
+        except Exception:
+            self.total_failed +=
