@@ -70,13 +70,16 @@ class TransactionStream(DataStream):
                 if not isinstance(d, str) or ":" not in d:
                     continue
 
-                op, value = d.split(":")
-                value = float(value)
+                op, val_str = d.split(":")
+                try:
+                    num_value = float(val_str)
+                except ValueError:
+                    continue
 
                 if op == "buy":
-                    flow.append(-value)
+                    flow.append(-num_value)
                 elif op == "sell":
-                    flow.append(value)
+                    flow.append(num_value)
 
             self.processed_count += len(data_batch)
 
