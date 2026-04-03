@@ -31,14 +31,14 @@ class NumericProcessor(DataProcessor):
                     "(expected list of numbers)"
                 )
 
-            values = [float(value) for value in data]
+            values = [value for value in data]
             count = len(values)
             total = sum(values)
             avg = total / count if count else 0.0
 
             return self.format_output(
                 f"Processed {count} numeric values, "
-                f"sum={total:.2f}, avg={avg:.2f}"
+                f"sum={total}, avg={avg}"
             )
         except Exception:
             return self.format_output(
@@ -104,17 +104,17 @@ class LogProcessor(DataProcessor):
 
 def main() -> None:
     print("=== CODE NEXUS - DATA PROCESSOR FOUNDATION ===")
-
+    print()
     print("Initializing Numeric Processor...")
     numeric_processor = NumericProcessor()
-    numeric_data = [1, 2, 2, 4, 5]
+    numeric_data = [1, 2, 3, 4, 5]
     print(f"Processing data: {numeric_data}")
     if numeric_processor.validate(numeric_data):
         print("Validation: Numeric data verified")
     else:
         print("Validation: Invalid numeric data")
     print(numeric_processor.process(numeric_data))
-
+    print()
     print("Initializing Text Processor...")
     text_processor = TextProcessor()
     text_data = "Hello Nexus World"
@@ -124,7 +124,7 @@ def main() -> None:
     else:
         print("Validation: Invalid text data")
     print(text_processor.process(text_data))
-
+    print()
     print("Initializing Log Processor...")
     log_processor = LogProcessor()
     log_data = "ERROR: Connection timeout"
@@ -134,7 +134,7 @@ def main() -> None:
     else:
         print("Validation: Invalid log entry")
     print(log_processor.process(log_data))
-
+    print()
     print("=== Polymorphic Processing Demo ===")
     print("Processing multiple data types through same interface...")
 
@@ -143,14 +143,14 @@ def main() -> None:
         TextProcessor(),
         LogProcessor(),
     ]
-    inputs: list[Any] = [[1, 2, 3], "Hello Nexus", "INFO: System ready"]
+    inputs: list[Any] = [[1, 2, 3], "Hello Nexus!", "INFO: System ready"]
 
     index = 0
     while index < len(processors):
         result = processors[index].process(inputs[index])
         print(f"Result {index + 1}: {result.replace('Output: ', '')}")
         index += 1
-
+    print()
     print("Foundation systems online. Nexus ready for advanced streams.")
 
 
