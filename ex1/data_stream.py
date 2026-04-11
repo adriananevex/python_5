@@ -10,7 +10,6 @@ class DataStream(ABC):
 
     @abstractmethod
     def process_batch(self, data_batch: List[Any]) -> str:
-
         pass
 
     def filter_data(
